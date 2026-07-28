@@ -1,0 +1,67 @@
+{
+    "name": "thealirazadev/ledgerkit",
+    "description": "Double-entry money ledger for Laravel: balanced entries, immutable postings, idempotent posting, and provable balances.",
+    "keywords": [
+        "laravel",
+        "ledger",
+        "double-entry",
+        "accounting",
+        "money"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ali Raza",
+            "email": "thealirazadev@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "ext-bcmath": "*",
+        "illuminate/console": "11.51.0",
+        "illuminate/database": "11.51.0",
+        "illuminate/support": "11.51.0"
+    },
+    "require-dev": {
+        "laravel/pint": "1.29.3",
+        "orchestra/testbench": "9.17.0",
+        "pestphp/pest": "3.8.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "LedgerKit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LedgerKit\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LedgerKit\\LedgerServiceProvider"
+            ],
+            "aliases": {
+                "Ledger": "LedgerKit\\Facades\\Ledger"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        },
+        "policy": {
+            "advisories": {
+                "ignore-id": [
+                    "PKSA-m5cs-t1y6-qpcs",
+                    "PKSA-3r5d-mb8f-1qw9",
+                    "PKSA-mdq4-51ck-6kdq"
+                ]
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

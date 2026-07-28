@@ -1,0 +1,79 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    name: pest (${{ matrix.engine }})
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [pgsql, mysql]
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: ledgerkit_test
+          POSTGRES_USER: ledgerkit
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U ledgerkit"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_DATABASE: ledgerkit_test
+          MYSQL_USER: ledgerkit
+          MYSQL_PASSWORD: secret
+          MYSQL_ROOT_PASSWORD: secret
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -psecret"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      LEDGERKIT_TEST_DB: ${{ matrix.engine }}
+      DB_PGSQL_HOST: 127.0.0.1
+      DB_PGSQL_PORT: 5432
+      DB_PGSQL_DATABASE: ledgerkit_test
+      DB_PGSQL_USERNAME: ledgerkit
+      DB_PGSQL_PASSWORD: secret
+      DB_MYSQL_HOST: 127.0.0.1
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_DATABASE: ledgerkit_test
+      DB_MYSQL_USERNAME: ledgerkit
+      DB_MYSQL_PASSWORD: secret
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: bcmath, pdo_pgsql, pdo_mysql
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Check formatting
+        run: vendor/bin/pint --test
+
+      - name: Run tests
+        run: vendor/bin/pest

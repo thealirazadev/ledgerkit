@@ -2,7 +2,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use LedgerKit\Exceptions\UnsupportedDriverException;
 
 return new class extends Migration
 {
@@ -13,6 +15,8 @@ return new class extends Migration
 
     public function up(): void
     {
+        $this->guardDriver();
+
         Schema::connection($this->getConnection())->create('ledger_entries', function (Blueprint $table) {
             $table->char('id', 26);
             $table->primary('id');
@@ -37,6 +41,20 @@ return new class extends Migration
 
     public function down(): void
     {
+        $this->guardDriver();
+
         Schema::connection($this->getConnection())->dropIfExists('ledger_entries');
+    }
+
+    /**
+     * @throws UnsupportedDriverException
+     */
+    private function guardDriver(): void
+    {
+        $driver = DB::connection($this->getConnection())->getDriverName();
+
+        if (! in_array($driver, UnsupportedDriverException::SUPPORTED_DRIVERS, true)) {
+            throw UnsupportedDriverException::forDriver($driver);
+        }
     }
 };

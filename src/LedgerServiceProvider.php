@@ -12,6 +12,8 @@ class LedgerServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/ledgerkit.php', 'ledgerkit');
+
+        $this->app->singleton(LedgerService::class);
     }
 
     public function boot(): void
@@ -22,9 +24,7 @@ class LedgerServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../config/ledgerkit.php' => $this->app->configPath('ledgerkit.php'),
             ], 'ledgerkit-config');
-        }
 
-        if ($this->app->runningInConsole()) {
             $this->commands([
                 DemoCommand::class,
                 SnapshotCommand::class,

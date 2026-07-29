@@ -37,6 +37,7 @@ Commands print the same taxonomy as `error [<code>]: <message>` on stderr and ex
 | `immutable_record` | `ImmutableRecordException` | `update`/`delete` attempted on an `Entry`/`Posting` model. |
 | `unsupported_driver` | `UnsupportedDriverException` | Migration run on a driver other than pgsql/mysql. |
 | `invalid_account` | `InvalidAccountException` | Bad code format/length, bad currency format, duplicate code, bad type. |
+| `invalid_entry` | `InvalidEntryException` | Entry metadata (description, external_ref, actor) empty or over its column width; entry id does not resolve. |
 
 Driver-level exceptions (deadlocks, connection loss, constraint violations the library does not
 own) pass through unwrapped; ledgerkit only catches the two documented unique-violation races.

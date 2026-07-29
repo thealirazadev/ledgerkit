@@ -47,6 +47,12 @@ class LedgerService
         }
     }
 
+    /** Starts an empty entry draft; every mutator returns a new draft. */
+    public function entry(): EntryDraft
+    {
+        return new EntryDraft($this);
+    }
+
     /**
      * @throws UnknownAccountException
      */

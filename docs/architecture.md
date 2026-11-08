@@ -88,7 +88,7 @@ and the package's value objects are ~50 lines, not a dependency.
 
 ## Data model
 
-Tables named here are the contract; the coding agent must not rename them. All tables use the
+Tables named here are the contract; implementations must not rename them. All tables use the
 `ledger_` prefix so the package coexists with any host schema. Amounts are **signed bigints in
 minor units, debit-positive**: a debit is stored positive, a credit negative, so "balanced" is
 exactly `SUM(amount) = 0` per currency and no debit/credit column can disagree with its amount.

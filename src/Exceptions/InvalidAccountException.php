@@ -39,6 +39,14 @@ class InvalidAccountException extends LedgerException
         );
     }
 
+    public static function immutableField(string $code, string $field): self
+    {
+        return new self(
+            "Account {$field} is write once; only the name of an account can change.",
+            ['code' => $code, 'field' => $field]
+        );
+    }
+
     public function errorCode(): string
     {
         return 'invalid_account';

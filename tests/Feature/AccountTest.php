@@ -90,3 +90,29 @@ it('throws unknown_account when the code does not resolve', function () {
             ->and($e->context())->toBe(['code' => 'missing.account']);
     }
 });
+
+it('lets the name change but keeps code, type and currency write once', function (string $field, mixed $value) {
+    $account = Ledger::createAccount('cash.main', 'Main cash', AccountType::Asset, 'USD');
+
+    $account->update(['name' => 'Operating cash']);
+
+    expect(Ledger::account('cash.main')->name)->toBe('Operating cash');
+
+    try {
+        $account->update([$field => $value]);
+        $this->fail("Expected a change to {$field} to be rejected.");
+    } catch (InvalidAccountException $e) {
+        expect($e->errorCode())->toBe('invalid_account')
+            ->and($e->context())->toBe(['code' => 'cash.main', 'field' => $field]);
+    }
+
+    $stored = Account::query()->where('id', $account->id)->first();
+
+    expect($stored->code)->toBe('cash.main')
+        ->and($stored->type)->toBe(AccountType::Asset)
+        ->and($stored->currency)->toBe('USD');
+})->with([
+    'code' => ['code', 'cash.other'],
+    'type' => ['type', AccountType::Liability],
+    'currency' => ['currency', 'EUR'],
+]);

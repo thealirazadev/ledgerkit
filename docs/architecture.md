@@ -8,7 +8,7 @@ Caller (application code)
         │  or Ledger::transfer($from, $to, $amount, ...)
         ▼
 Draft validation (in PHP, before any SQL)
-        ├─ at least 2 lines                      → invalid_entry
+        ├─ at least 2 lines                      → unbalanced_entry
         ├─ every amount a nonzero integer        → invalid_amount
         ├─ every account exists                  → unknown_account
         ├─ line currency = account currency      → currency_mismatch
@@ -224,8 +224,8 @@ entry's sums from the stored postings. This asymmetry is why PostgreSQL is the p
    stall, and commit after transaction B commits id 101. A snapshot taken at boundary 101 before
    A commits would silently omit posting 100 forever. The safety window makes the boundary older
    than any plausibly in-flight write; it is sound whenever no posting transaction lives longer
-   than the window, which the two-statement write transaction makes easy and
-   `docs/launch-checklist.md` makes an operator check.
+   than the window, which the two-statement write transaction makes easy; the config comment
+   on `snapshot.safety_window_seconds` states it as an operator requirement.
 3. If the boundary does not exceed the latest snapshot's boundary, do nothing (idempotent).
 4. Compute incrementally: previous snapshot balance + SUM/COUNT of postings in
    `(previous_boundary, boundary]`; insert the new snapshot row. Append-only: history is kept

@@ -257,7 +257,9 @@ final class EntryDraft
      */
     private function convertDecimalString(string $amount, string $currency): int
     {
-        if (preg_match('/^-?\d+(\.\d+)?$/', $amount) !== 1) {
+        // D: without it `$` also matches before a trailing newline, and bcmath
+        // would then raise a ValueError instead of invalid_amount.
+        if (preg_match('/^-?\d+(\.\d+)?$/D', $amount) !== 1) {
             throw InvalidAmountException::format($currency);
         }
 

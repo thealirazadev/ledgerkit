@@ -45,7 +45,7 @@ Laravel application gets bank-grade bookkeeping semantics without building them 
   `illuminate/console` ^11), `ext-bcmath`
 - PostgreSQL 15+ (primary) / MySQL 8.x (supported); SQLite intentionally unsupported
 - Pest on PHPUnit with orchestra/testbench, run against both real engines
-- Laravel Pint (PSR-12)
+- Laravel Pint (default Laravel preset, no config file)
 
 ## Docs
 
@@ -61,7 +61,9 @@ Laravel application gets bank-grade bookkeeping semantics without building them 
 
 Work in progress. Implemented today: the package skeleton and service provider, the
 constraint-hardened schema for PostgreSQL and MySQL (accounts, entries, postings, balance
-snapshots), account creation and lookup, and the validating entry draft builder. The posting
-transaction, immutability triggers, idempotent replay, transfers, reversal, balance queries and
-the snapshot builder are specified in `docs/architecture.md` and not built yet; the three
-`ledger:*` commands are registered but currently exit with "not implemented yet".
+snapshots), account creation and lookup (code, type and currency are write once), the
+validating entry draft builder (it compiles a balanced entry into rows but cannot post them yet),
+and the read-only `ledger:verify` command. The posting transaction, immutability triggers,
+idempotent replay, transfers, reversal, balance queries, the snapshot builder and the
+`ledger:demo` and `ledger:snapshot` commands are specified in `docs/architecture.md` and
+`docs/api-contracts.md` and not built yet; those two commands are not registered until they exist.

@@ -60,7 +60,7 @@ Ledger::balanceAsOf($account, $at)           → SUM(amount) WHERE posted_at <= 
 - **Pest on PHPUnit + orchestra/testbench ^9** - Testbench boots a minimal Laravel app around
   the package; tests run against real Postgres and MySQL (no SQLite stand-in), because the
   invariants under test live in the database. See `docs/testing.md`.
-- **Laravel Pint** - PSR-12, zero config.
+- **Laravel Pint** - default Laravel preset, zero config.
 
 No other runtime dependencies. No money library: amounts are plain integers plus a currency code,
 and the package's value objects are ~50 lines, not a dependency.
@@ -75,7 +75,7 @@ and the package's value objects are ~50 lines, not a dependency.
   throw `ImmutableRecordException` from overridden `update`/`delete` as a first line of defense;
   the database triggers are the real enforcement.
 - **`EntryDraft`** - Immutable builder collecting lines and metadata; performs all PHP-side
-  validation in `post()` before any SQL runs.
+  validation in `compile()`, which `post()` calls before any SQL runs.
 - **`IdempotencyFingerprint`** - Canonicalizes a draft's lines (sorted `account_id:amount:
   currency` tuples, newline-joined) and hashes with sha256. Lives in one place so the write path
   and the conflict path can never disagree on the canonical form.

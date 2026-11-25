@@ -62,7 +62,7 @@ vendor/bin/pest tests/Feature/SchemaConstraintTest.php
 # Filter by test name
 vendor/bin/pest --filter="duplicate account code"
 
-# Formatting check (must pass; PSR-12 via Pint)
+# Formatting check (must pass; Pint's default Laravel preset)
 vendor/bin/pint --test
 ```
 

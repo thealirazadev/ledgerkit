@@ -39,6 +39,26 @@ Laravel application gets bank-grade bookkeeping semantics without building them 
 - Artisan commands: `ledger:demo` (scripted end-to-end scenario), `ledger:verify` (read-only
   invariant proof), `ledger:snapshot` (balance snapshot builder).
 
+## Usage (implemented today)
+
+The service provider and the `Ledger` facade alias are auto-discovered, and the provider loads
+the package migrations, so `php artisan migrate` creates the schema. Then:
+
+```php
+use LedgerKit\AccountType;
+use LedgerKit\Facades\Ledger;
+
+// Code: lowercase letters, digits, '.', '_' or '-' (1 to 64 chars). Currency: ISO 4217, e.g. 'USD'.
+$cash = Ledger::createAccount('assets.cash', 'Cash on hand', AccountType::Asset, 'USD');
+
+$same = Ledger::account('assets.cash'); // throws UnknownAccountException if the code is missing
+```
+
+```bash
+php artisan ledger:verify                        # read-only invariant proof
+php artisan ledger:verify --account=assets.cash  # limit the snapshot pass to one account
+```
+
 ## Stack
 
 - PHP 8.3, composer package (`illuminate/database`, `illuminate/support`,

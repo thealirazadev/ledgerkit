@@ -51,18 +51,17 @@ Laravel application gets bank-grade bookkeeping semantics without building them 
 
 | File | Contents |
 |---|---|
-| [docs/PRD.md](docs/PRD.md) | Problem, target user, user stories, features, success criteria |
 | [docs/architecture.md](docs/architecture.md) | Stack rationale, data model, flows, failure modes, invariants |
-| [docs/rules.md](docs/rules.md) | Project-specific engineering rules |
-| [docs/phases.md](docs/phases.md) | Implementation phases with commit lists and verification |
 | [docs/design.md](docs/design.md) | API ergonomics and CLI output design |
-| [docs/testing.md](docs/testing.md) | Test strategy, commands, CI plan |
+| [docs/testing.md](docs/testing.md) | Test strategy, commands, CI |
 | [docs/api-contracts.md](docs/api-contracts.md) | Public PHP API, commands, error codes, config |
-| [docs/launch-checklist.md](docs/launch-checklist.md) | Pre-release gates |
-| [docs/memory.md](docs/memory.md) | Working log and decisions |
+| [docs/decisions.md](docs/decisions.md) | Design decisions and the reasons behind them |
 
 ## Status
 
-Planning stage: these documents are the complete specification and no implementation code
-exists yet. Implementation will follow `docs/phases.md` one phase at a time, starting with
-Phase 1 after owner review of these docs.
+Work in progress. Implemented today: the package skeleton and service provider, the
+constraint-hardened schema for PostgreSQL and MySQL (accounts, entries, postings, balance
+snapshots), account creation and lookup, and the validating entry draft builder. The posting
+transaction, immutability triggers, idempotent replay, transfers, reversal, balance queries and
+the snapshot builder are specified in `docs/architecture.md` and not built yet; the three
+`ledger:*` commands are registered but currently exit with "not implemented yet".

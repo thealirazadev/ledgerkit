@@ -18,8 +18,8 @@
 - **Bypass tests use raw SQL on purpose.** DB-enforcement tests (unbalanced commit abort on
   Postgres, trigger rejection of UPDATE/DELETE, composite-FK currency mismatch, CHECK
   violations) issue raw statements deliberately, because their subject is what happens when the
-  library is bypassed. These are the only raw money-row writes in the repo, per
-  `docs/rules.md`.
+  library is bypassed. These are the only raw money-row writes in the repo; library code
+  and every other test go through `LedgerService`.
 - **Engine-conditional tests are explicit.** Postgres-only behavior (deferred balance trigger)
   lives in tests skipped with a named reason on MySQL, so the MySQL run documents the
   difference instead of hiding it.
@@ -57,10 +57,10 @@ LEDGERKIT_TEST_DB=pgsql vendor/bin/pest
 LEDGERKIT_TEST_DB=mysql vendor/bin/pest
 
 # A single file
-vendor/bin/pest tests/Feature/IdempotencyTest.php
+vendor/bin/pest tests/Feature/SchemaConstraintTest.php
 
 # Filter by test name
-vendor/bin/pest --filter="concurrent same key"
+vendor/bin/pest --filter="duplicate account code"
 
 # Formatting check (must pass; PSR-12 via Pint)
 vendor/bin/pint --test
@@ -76,17 +76,18 @@ cp .env.example .env    # point DB_* at local postgres and mysql test databases
 Both engines must exist locally (or via docker) with empty test databases; testbench migrates
 fresh per run.
 
-## CI plan
+## CI
 
-GitHub Actions on push and pull request to `main`: a two-job matrix, one with a `postgres:15`
-service and one with `mysql:8` (both with health checks), each running `vendor/bin/pint --test`
-then `vendor/bin/pest` on PHP 8.3 with `ext-bcmath`. A phase is not done until both jobs are
-green.
+`.github/workflows/tests.yml` runs on push and pull request to `main` on `ubuntu-24.04`: a
+two-job matrix (`engine: [pgsql, mysql]`, `fail-fast: false`) with a `postgres:15` and a
+`mysql:8` service container, both health-checked. Each job sets up PHP 8.3 with `bcmath`,
+`pdo_pgsql` and `pdo_mysql`, runs `composer install`, then `vendor/bin/pint --test`, then
+`vendor/bin/pest` with `LEDGERKIT_TEST_DB` set to the matrix engine. A change is ready to merge
+only when both jobs are green.
 
 ## Definition of "done" for a feature
 
 1. `vendor/bin/pint --test` - no style violations.
 2. `vendor/bin/pest` green on **both** engines locally (or both CI jobs green).
-3. The feature's verification items in `docs/phases.md` pass.
-
-One commit per feature, in the order listed in `docs/phases.md`.
+3. New behaviour has tests on both engines, and engine-specific behaviour is skipped with a
+   named reason on the other engine.

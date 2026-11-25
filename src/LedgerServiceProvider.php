@@ -3,8 +3,6 @@
 namespace LedgerKit;
 
 use Illuminate\Support\ServiceProvider;
-use LedgerKit\Console\DemoCommand;
-use LedgerKit\Console\SnapshotCommand;
 use LedgerKit\Console\VerifyCommand;
 
 class LedgerServiceProvider extends ServiceProvider
@@ -25,9 +23,9 @@ class LedgerServiceProvider extends ServiceProvider
                 __DIR__.'/../config/ledgerkit.php' => $this->app->configPath('ledgerkit.php'),
             ], 'ledgerkit-config');
 
+            // ledger:demo and ledger:snapshot are specified in docs/api-contracts.md
+            // and register once the posting path and SnapshotBuilder exist.
             $this->commands([
-                DemoCommand::class,
-                SnapshotCommand::class,
                 VerifyCommand::class,
             ]);
         }

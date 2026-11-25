@@ -1,5 +1,10 @@
 # API Contracts - ledgerkit
 
+Status: of the contract below, `createAccount()`, `account()`, the `EntryDraft` metadata and
+line methods, the exceptions and `ledger:verify` are implemented. `post()`, idempotency,
+transfers, reversal, balances, snapshots, `ledger:snapshot` and `ledger:demo` are specified
+here and not built yet; the README's Status section is the current source of truth.
+
 ledgerkit has no HTTP surface. Its contracts are three things, fixed here before any code is
 written: the **PHP public API** (the `Ledger` facade, result objects, and exceptions), the
 **artisan commands**, and the **database schema** (fixed in `docs/architecture.md`; the table
@@ -36,7 +41,7 @@ Commands print the same taxonomy as `error [<code>]: <message>` on stderr and ex
 | `already_reversed` | `AlreadyReversedException` | Entry already has a reversing entry (including lost races). |
 | `immutable_record` | `ImmutableRecordException` | `update`/`delete` attempted on an `Entry`/`Posting` model. |
 | `unsupported_driver` | `UnsupportedDriverException` | Migration run on a driver other than pgsql/mysql. |
-| `invalid_account` | `InvalidAccountException` | Bad code format/length, bad currency format, duplicate code, bad type. |
+| `invalid_account` | `InvalidAccountException` | Bad code format/length, bad currency format, duplicate code, bad type, or a change to a write-once field (code, type, currency). |
 | `invalid_entry` | `InvalidEntryException` | Entry metadata (description, external_ref, actor) empty or over its column width; entry id does not resolve. |
 
 Driver-level exceptions (deadlocks, connection loss, constraint violations the library does not

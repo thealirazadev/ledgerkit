@@ -112,6 +112,16 @@ it('leaves the original draft untouched when a mutator is called', function () {
     expect(compiledAmounts($complete->compile()))->toBe([100, -100]);
 });
 
+it('records the reversed entry id only on a reversal draft', function () {
+    draftAccounts();
+
+    $draft = Ledger::entry()->debit('cash.usd', 500)->credit('revenue.usd', 500);
+    $reversal = $draft->reversing('01JD0000000000000000000000');
+
+    expect($draft->compile()['entry']['reverses_entry_id'])->toBeNull()
+        ->and($reversal->compile()['entry']['reverses_entry_id'])->toBe('01JD0000000000000000000000');
+});
+
 it('rejects an entry with fewer than two lines', function (int $lines) {
     draftAccounts();
 
